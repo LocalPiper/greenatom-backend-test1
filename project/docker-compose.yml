@@ -5,10 +5,16 @@ services:
     environment:
       POSTGRES_USER: fastapi
       POSTGRES_PASSWORD: fastapi
-      POSTGRES_DB: waste_management
+      POSTGRES_DB: project
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
 volumes:
   postgres_data:
