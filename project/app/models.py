@@ -13,29 +13,32 @@ class Organization(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
 
-    storages = relationship("Storage", secondary="organization_storages", back_populates="organizations")
+    storages = relationship("Storage", back_populates="organization")
 
 class WSA(Base):
     __tablename__ = "wsas"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
 
-    storages = relationship("Storage", secondary="wsa_storages", back_populates="wsas")
+    storages = relationship("Storage", back_populates="wsa")
 
 class Storage(Base):
     __tablename__ = "storages"
     id = Column(Integer, primary_key=True, index=True)
     waste_type = Column(Enum(WasteType), index=True)
-    size = Column(Float)
-    capacity = Column(Float)
+    size = Column(Integer)
+    capacity = Column(Integer)
 
-    organizations = relationship("Organization", secondary="organization_storages", back_populates="storages")
-    wsas = relationship("WSA", secondary="wsa_storages", back_populates="storages")
+    organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
+    wsa_id = Column(Integer, ForeignKey("wsas.id"), nullable=True)
+
+    organization = relationship("Organization", back_populates="storages")
+    wsa = relationship("WSA", back_populates="storages")
 
 class Path(Base):
     __tablename__ = "paths"
     id = Column(Integer, primary_key=True, index=True)
-    length = Column(Float)
+    length = Column(Integer)
     bidirectional = Column(Boolean, default=False)
 
     organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
