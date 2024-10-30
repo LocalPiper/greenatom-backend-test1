@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Enum, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
-from database import Base
+from .database import Base
 import enum
 
 class WasteType(str, enum.Enum):
