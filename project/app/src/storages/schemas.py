@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -13,7 +14,8 @@ class StorageBase(BaseModel):
     capacity: int
 
 class StorageCreate(StorageBase):
-    pass
+    organization_id: Optional[int] = None
+    wsa_id: Optional[int] = None
 
 class Storage(StorageBase):
     id: int
