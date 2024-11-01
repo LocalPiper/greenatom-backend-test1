@@ -1,25 +1,6 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, Session
-from .models import Organization, WSA, Storage, Path, WasteType
-
-DATABASE_URL = "postgresql://fastapi:fastapi@db/project"
-
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False)
-Base = declarative_base()
-
-def init_db():
-    Base.metadata.create_all(bind=engine)
-    with SessionLocal() as db:
-        create_sample_data(db)
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# script.py
+from app.src.models import WSA, Organization, Path, Storage, WasteType # 1 -> 2
+from sqlalchemy.orm import Session
 
 def create_sample_data(db: Session):
     if db.query(Organization).first() is None:

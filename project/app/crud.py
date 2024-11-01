@@ -1,5 +1,8 @@
+# crud.py
 from sqlalchemy.orm import Session
-from . import models, schemas
+
+from .src import models
+from .src import schemas
 
 def create_organization(db: Session, organization: schemas.OrganizationCreate):
     db_organization = models.Organization(name=organization.name)
