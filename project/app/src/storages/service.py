@@ -15,3 +15,11 @@ class StorageService:
     
     def get_all_storages(self) -> List[Storage]:
         return self.repository.get_all_storages()
+    
+    def update_storage_size(self, storage_id: int, new_size: int) -> Storage:
+        if not self.repository.get_storage(storage_id):
+            print("no storage with given id")
+        elif (self.repository.get_storage(storage_id).capacity < new_size) or (new_size < 0):
+            print("invalid size value")
+        else:
+            return self.repository.update_storage_size(storage_id, new_size)
