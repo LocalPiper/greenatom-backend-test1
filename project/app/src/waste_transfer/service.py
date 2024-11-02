@@ -4,10 +4,11 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_transfer.schemas import WasteTransferRequest
+from app.src.waste_transfer.schemas import WasteTransferRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
+from app.src.waste_transfer.utils import Graph, Vertex, Edge
 
 class WasteTransferService:
     def __init__(self, db: Session):
@@ -59,6 +60,9 @@ class WasteTransferService:
         # for each pair of wsas find a path
         paths = list(set(paths + self.iterative_path_finder(wsas)))
 
+        # build a graph
+        graph : Graph = self.graph_builder(wsas, paths, transfer_data.waste_type)
+
     
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
         paths : List[Path] = self.path_service.get_paths_from_wsa(wsa.id)
@@ -80,4 +84,36 @@ class WasteTransferService:
         
         return paths
 
-        
+    def graph_builder(self, wsas: List[WSA], paths: List[Path], waste_type: WasteType) -> Graph:
+        g : Graph = Graph()
+        g = self.build_vertices(wsas, waste_type, g)
+        g = self.build_edges(paths, g)
+        return g
+
+
+    
+    def build_vertices(self, wsas: List[WSA], waste_type: WasteType, g : Graph) -> Graph:
+        for wsa in wsas:
+            storages : List[Storage] = self.storage_service.get_storages_by_wsa_id(wsa.id)
+            b = False
+            for storage in storages:
+                if storage.waste_type == waste_type:
+                    g.add_vertex(wsa.id, Vertex(storage.size, storage.capacity))
+                    b = True
+                    break
+            if not b:
+                g.add_vertex(wsa.id, Vertex())
+        return g
+    
+    def build_edges(self, paths: List[Path], g : Graph) -> Graph:
+        for path in paths:
+            if path.bidirectional:
+                g.add_edge(path.wsa_start_id, Edge(path.wsa_end_id, path.length))
+                g.add_edge(path.wsa_end_id, Edge(path.wsa_start_id, path.length))
+            else:
+                if path.organization_id:
+                    g.add_edge(0, Edge(path.wsa_start_id, path.length))
+                else:
+                    g.add_edge(path.wsa_start_id, Edge(path.wsa_end_id, path.length))
+        return g
+            

@@ -18,4 +18,6 @@ class Graph:
         self.vertices[id] = v
 
     def add_edge(self, id: int, e : Edge):
-        self.edges[id] = e
+        if id not in self.edges:
+            self.edges[id] = []
+        self.edges[id].append(e)

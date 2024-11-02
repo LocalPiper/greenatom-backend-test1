@@ -13,6 +13,9 @@ class StorageService:
     def get_storage(self, storage_id: int) -> Storage:
         return self.repository.get_storage(storage_id)
     
+    def get_storages_by_wsa_id(self, id: int) -> List[Storage]:
+        return self.repository.get_storages_by_wsa_id(id)
+    
     def get_all_storages(self) -> List[Storage]:
         return self.repository.get_all_storages()
     
