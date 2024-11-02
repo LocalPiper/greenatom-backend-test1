@@ -23,3 +23,4 @@ async def read_root():
 @app.on_event("startup")
 def startup_event(db: Session = next(get_db())):
     init_db()
+    # create_sample_data(db)
