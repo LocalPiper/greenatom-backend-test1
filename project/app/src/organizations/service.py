@@ -13,6 +13,9 @@ class OrganizationService:
     def get_organization(self, organization_id: int) -> Organization:
         return self.repository.get_organization(organization_id)
     
+    def get_by_name(self, name: str) -> Organization:
+        return self.repository.get_by_name(name)
+    
     def get_all_organizations(self) -> List[Organization]:
         return self.repository.get_all_organizations()
     
