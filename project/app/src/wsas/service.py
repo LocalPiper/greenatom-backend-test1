@@ -15,3 +15,6 @@ class WSAService:
     
     def get_all_wsas(self) -> List[WSA]:
         return self.repository.get_all_wsas()
+    
+    def truncate_data(self) -> None:
+        self.repository.truncate_data()

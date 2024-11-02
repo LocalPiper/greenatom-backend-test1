@@ -19,3 +19,7 @@ class OrganizationRepository:
     def get_all_organizations(self):
          return self.db.query(Organization).all()
     
+    def truncate_data(self):
+         self.db.query(Organization).delete()
+         self.db.commit()
+    

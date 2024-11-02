@@ -23,3 +23,6 @@ class StorageService:
             print("invalid size value")
         else:
             return self.repository.update_storage_size(storage_id, new_size)
+
+    def truncate_data(self) -> None:
+        self.repository.truncate_data()

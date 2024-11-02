@@ -15,3 +15,6 @@ class OrganizationService:
     
     def get_all_organizations(self) -> List[Organization]:
         return self.repository.get_all_organizations()
+    
+    def truncate_data(self) -> None:
+        self.repository.truncate_data()

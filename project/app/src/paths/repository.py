@@ -19,3 +19,6 @@ class PathRepository:
     def get_all_paths(self):
          return self.db.query(Path).all()
     
+    def truncate_data(self):
+         self.db.query(Path).delete()
+         self.db.commit()

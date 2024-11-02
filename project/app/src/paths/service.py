@@ -15,3 +15,6 @@ class PathService:
     
     def get_all_paths(self) -> List[Path]:
         return self.repository.get_all_paths()
+
+    def truncate_data(self) -> None:
+        self.repository.truncate_data()

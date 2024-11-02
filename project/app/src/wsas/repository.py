@@ -18,4 +18,7 @@ class WSARepository:
     
     def get_all_wsas(self):
          return self.db.query(WSA).all()
-    
+
+    def truncate_data(self):
+         self.db.query(WSA).delete()
+         self.db.commit()

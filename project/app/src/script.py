@@ -16,6 +16,20 @@ class WasteType(str, Enum):
     GLASS = "glass"
     PLASTIC = "plastic"
 
+
+def truncate_data(db: Session):
+    org_service = OrganizationService(db)
+    wsa_service = WSAService(db)
+    storage_service = StorageService(db)
+    path_service = PathService(db)
+
+    path_service.truncate_data()
+    storage_service.truncate_data()
+    wsa_service.truncate_data()
+    org_service.truncate_data()
+
+    print("all data truncated")
+
 def create_sample_data(db: Session):
     org_service = OrganizationService(db)
     wsa_service = WSAService(db)

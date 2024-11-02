@@ -26,3 +26,7 @@ class StorageRepository:
               self.db.commit()
               self.db.refresh(db_storage)
          return db_storage
+    
+    def truncate_data(self):
+         self.db.query(Storage).delete()
+         self.db.commit()

@@ -30,3 +30,4 @@ def update_storage_size(
     updated_storage = service.update_storage_size(storage_id, new_size)
     if updated_storage is None:
         raise HTTPException(status_code=404, detail="Storage not found")
+    return updated_storage
