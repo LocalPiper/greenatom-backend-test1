@@ -7,6 +7,7 @@ from app.src.script import truncate_data, create_sample_data
 from app.src.wsas.router import router as wsas_router
 from app.src.storages.router import router as storages_router
 from app.src.paths.router import router as paths_router
+from app.src.waste_transfer.router import router as transfer_router
 
 app = FastAPI()
 
@@ -14,6 +15,7 @@ app.include_router(organizations_router, prefix="/api")
 app.include_router(wsas_router, prefix="/api")
 app.include_router(storages_router, prefix="/api")
 app.include_router(paths_router, prefix="/api")
+app.include_router(transfer_router, prefix="/api")
 
 
 @app.get("/")

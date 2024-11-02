@@ -4,7 +4,7 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_transfer.schemas import WasteTransferRequest, WasteType
+from app.src.waste_transfer.schemas import EdgeModel, GraphModel, VertexModel, WasteTransferRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
@@ -63,6 +63,12 @@ class WasteTransferService:
         # build a graph
         graph : Graph = self.graph_builder(wsas, paths, transfer_data.waste_type)
 
+        vertices = {k: VertexModel(sz=v.sz, cap=v.cap) for k, v in graph.vertices.items()}
+        edges = {k: [EdgeModel(next=edge.next, length=edge.length) for edge in edge_list] 
+                 for k, edge_list in graph.edges.items()}
+        
+        return GraphModel(vertices=vertices, edges=edges)
+
     
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
         paths : List[Path] = self.path_service.get_paths_from_wsa(wsa.id)
@@ -89,8 +95,6 @@ class WasteTransferService:
         g = self.build_vertices(wsas, waste_type, g)
         g = self.build_edges(paths, g)
         return g
-
-
     
     def build_vertices(self, wsas: List[WSA], waste_type: WasteType, g : Graph) -> Graph:
         for wsa in wsas:
