@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from repository import OrganizationRepository
-from schemas import OrganizationCreate, Organization
+from app.src.organizations.repository import OrganizationRepository
+from app.src.organizations.schemas import OrganizationCreate, Organization
 
 class OrganizationService:
     def __init__(self, db: Session):

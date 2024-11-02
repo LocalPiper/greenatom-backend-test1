@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from schemas import StorageCreate, Storage
-from service import StorageService
+from app.src.storages.schemas import StorageCreate, Storage
+from app.src.storages.service import StorageService
 from app.src.database import get_db
 
 router = APIRouter()

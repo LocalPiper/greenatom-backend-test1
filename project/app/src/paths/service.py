@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from repository import PathRepository
-from schemas import PathCreate, Path
+from app.src.paths.repository import PathRepository
+from app.src.paths.schemas import PathCreate, Path
 
 class PathService:
     def __init__(self, db: Session):

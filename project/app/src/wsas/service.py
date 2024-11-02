@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from repository import WSARepository
-from schemas import WSACreate, WSA
+from app.src.wsas.repository import WSARepository
+from app.src.wsas.schemas import WSACreate, WSA
 
 class WSAService:
     def __init__(self, db: Session):
