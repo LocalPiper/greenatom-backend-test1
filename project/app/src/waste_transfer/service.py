@@ -55,6 +55,10 @@ class WasteTransferService:
             self.recursive_wsa_finder(wsa, wsas_id_set, next_wsas)
         
         wsas = list(set(wsas + next_wsas))
+
+        # for each pair of wsas find a path
+        paths = list(set(paths + self.iterative_path_finder(wsas)))
+
     
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
         paths : List[Path] = self.path_service.get_paths_from_wsa(wsa.id)
@@ -65,4 +69,15 @@ class WasteTransferService:
                     wsas.append(next_wsa)
                     s.add(next_wsa.id)
                     self.recursive_wsa_finder(next_wsa, s, wsas)
+    
+    def iterative_path_finder(self, wsas: List[WSA]):
+        paths : List[Path] = []
+        for i in range(len(wsas) - 1):
+            for j in range(i + 1, len(wsas)):
+                path = self.path_service.get_path_from_wsas(wsas[i].id, wsas[j].id)
+                if path:
+                    paths.append(path)
+        
+        return paths
+
         

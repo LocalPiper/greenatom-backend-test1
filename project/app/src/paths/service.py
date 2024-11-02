@@ -22,5 +22,8 @@ class PathService:
     def get_paths_from_wsa(self, wsa_id: int) -> List[Path]:
         return self.repository.get_paths_from_wsa(wsa_id)
 
+    def get_path_from_wsas(self, start: int, end: int) -> Path:
+        return self.repository.get_path_from_wsas(start, end)
+
     def truncate_data(self) -> None:
         self.repository.truncate_data()
