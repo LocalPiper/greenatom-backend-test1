@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from app.src.wsas.repository import WSARepository
 from app.src.wsas.schemas import WSACreate, WSA
@@ -11,3 +12,6 @@ class WSAService:
 
     def get_wsa(self, wsa_id: int) -> WSA:
         return self.repository.get_wsa(wsa_id)
+    
+    def get_all_wsas(self) -> List[WSA]:
+        return self.repository.get_all_wsas()

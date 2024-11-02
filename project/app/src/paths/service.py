@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from app.src.paths.repository import PathRepository
 from app.src.paths.schemas import PathCreate, Path
@@ -11,3 +12,6 @@ class PathService:
 
     def get_path(self, path_id: int) -> Path:
         return self.repository.get_path(path_id)
+    
+    def get_all_paths(self) -> List[Path]:
+        return self.repository.get_all_paths()

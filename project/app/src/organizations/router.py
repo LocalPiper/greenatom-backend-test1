@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.src.organizations.schemas import OrganizationCreate, Organization
@@ -13,3 +14,9 @@ def create_organization(
 ):
     service = OrganizationService(db)
     return service.create_organization(organization_data)
+
+
+@router.get("/organizations/", response_model=List[Organization])
+def get_all_organizations(db: Session = Depends(get_db)):
+    service = OrganizationService(db)
+    return service.get_all_organizations()

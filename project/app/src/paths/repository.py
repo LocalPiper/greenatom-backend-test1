@@ -16,3 +16,6 @@ class PathRepository:
     def get_path(self, path_id: int):
          return self.db.query(Path).filter(Path.id == path_id).first()
     
+    def get_all_paths(self):
+         return self.db.query(Path).all()
+    

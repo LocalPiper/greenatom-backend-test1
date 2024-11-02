@@ -1,4 +1,4 @@
-# src/init_data.py
+# script.py
 
 from sqlalchemy.orm import Session
 from app.src.organizations.service import OrganizationService

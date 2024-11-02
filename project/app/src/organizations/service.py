@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from app.src.organizations.repository import OrganizationRepository
 from app.src.organizations.schemas import OrganizationCreate, Organization
@@ -11,3 +12,6 @@ class OrganizationService:
 
     def get_organization(self, organization_id: int) -> Organization:
         return self.repository.get_organization(organization_id)
+    
+    def get_all_organizations(self) -> List[Organization]:
+        return self.repository.get_all_organizations()

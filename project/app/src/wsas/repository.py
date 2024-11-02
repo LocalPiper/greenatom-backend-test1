@@ -16,3 +16,6 @@ class WSARepository:
     def get_wsa(self, wsa_id: int):
          return self.db.query(WSA).filter(WSA.id == wsa_id).first()
     
+    def get_all_wsas(self):
+         return self.db.query(WSA).all()
+    

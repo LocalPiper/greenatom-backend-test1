@@ -16,3 +16,6 @@ class OrganizationRepository:
     def get_organization(self, organization_id: int):
          return self.db.query(Organization).filter(Organization.id == organization_id).first()
     
+    def get_all_organizations(self):
+         return self.db.query(Organization).all()
+    

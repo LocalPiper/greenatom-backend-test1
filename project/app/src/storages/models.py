@@ -1,6 +1,6 @@
 
 import enum
-from sqlalchemy import Column, ForeignKey, Integer
+from sqlalchemy import Column, ForeignKey, Integer, Enum
 from sqlalchemy.orm import relationship
 from app.src.database import Base
 
@@ -12,7 +12,7 @@ class WasteType(str, enum.Enum):
 class Storage(Base):
     __tablename__ = "storages"
     id = Column(Integer, primary_key=True, index=True)
-    waste_type = Column(enum.Enum(WasteType), index=True)
+    waste_type = Column(Enum(WasteType), index=True)
     size = Column(Integer)
     capacity = Column(Integer)
 

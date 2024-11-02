@@ -1,3 +1,4 @@
+from typing import List
 from sqlalchemy.orm import Session
 from app.src.storages.repository import StorageRepository
 from app.src.storages.schemas import StorageCreate, Storage
@@ -11,3 +12,6 @@ class StorageService:
 
     def get_storage(self, storage_id: int) -> Storage:
         return self.repository.get_storage(storage_id)
+    
+    def get_all_storages(self) -> List[Storage]:
+        return self.repository.get_all_storages()

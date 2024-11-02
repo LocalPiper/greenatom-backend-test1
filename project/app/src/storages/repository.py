@@ -16,3 +16,6 @@ class StorageRepository:
     def get_storage(self, storage_id: int):
          return self.db.query(Storage).filter(Storage.id == storage_id).first()
     
+    def get_all_storages(self):
+         return self.db.query(Storage).all()
+    
