@@ -19,6 +19,12 @@ class PathRepository:
     def get_all_paths(self):
          return self.db.query(Path).all()
     
+    def get_paths_from_org(self, organization_id: int):
+         return self.db.query(Path).filter(Path.organization_id == organization_id).all()
+    
+    def get_paths_from_wsa(self, wsa_id: int):
+         return self.db.query(Path).filter((Path.wsa_start_id == wsa_id) and (not Path.organization_id)).all()
+    
     def truncate_data(self):
          self.db.query(Path).delete()
          self.db.commit()

@@ -15,6 +15,12 @@ class PathService:
     
     def get_all_paths(self) -> List[Path]:
         return self.repository.get_all_paths()
+    
+    def get_paths_from_org(self, organization_id: int) -> List[Path]:
+        return self.repository.get_paths_from_org(organization_id)
+    
+    def get_paths_from_wsa(self, wsa_id: int) -> List[Path]:
+        return self.repository.get_paths_from_wsa(wsa_id)
 
     def truncate_data(self) -> None:
         self.repository.truncate_data()
