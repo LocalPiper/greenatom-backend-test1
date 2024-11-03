@@ -1,5 +1,6 @@
 # script.py
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
@@ -28,7 +29,13 @@ def truncate_data(db: Session):
     wsa_service.truncate_data()
     org_service.truncate_data()
 
-    print("all data truncated")
+
+    db.execute(text("ALTER SEQUENCE organizations_id_seq RESTART WITH 1"))
+    db.execute(text("ALTER SEQUENCE wsas_id_seq RESTART WITH 1"))
+    db.execute(text("ALTER SEQUENCE storages_id_seq RESTART WITH 1"))
+    db.execute(text("ALTER SEQUENCE paths_id_seq RESTART WITH 1"))
+
+    print("All data and sequences truncated")
 
 def create_sample_data(db: Session):
     org_service = OrganizationService(db)
