@@ -1,7 +1,5 @@
 from typing import List
 from queue import Queue, PriorityQueue
-from app.src.paths.models import Path
-from app.src.wsas.models import WSA
 from app.src.waste_transfer.schemas import WasteType
 
 

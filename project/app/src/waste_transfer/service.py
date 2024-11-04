@@ -1,4 +1,5 @@
 from typing import List, Set
+from queue import Queue
 from sqlalchemy.orm import Session
 from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
@@ -8,7 +9,7 @@ from app.src.waste_transfer.schemas import EdgeModel, GraphModel, VertexModel, W
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
-from app.src.waste_transfer.utils import Graph, Vertex, Edge, Algorithm
+from app.src.waste_transfer.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
 
 class WasteTransferService:
     def __init__(self, db: Session):
@@ -64,9 +65,25 @@ class WasteTransferService:
         graph : Graph = self.graph_builder(wsas, paths, transfer_data.waste_type)
 
         # STEP 2: Shortest Path in Graph
-        algo : Algorithm = Algorithm(graph)
-        algo.build_queue()
-
+        algorithm : Algorithm = Algorithm(graph)
+        amount = max(0, min(transfer_data.quantity, storage.size))
+        res = algorithm.generate_queries(transfer_data.waste_type, amount, algorithm.build_queue())
+        remainder : int = res[0]
+        queue : Queue = res[1]
+        
+        # STEP 3: Execute Queries
+        if remainder > 0:
+            print("Impossible to unload storage!")
+        while not queue.empty():
+            query : StorageUpdateQuery = queue.get()
+            storages_of_wsa = self.storage_service.get_storages_by_wsa_id(query.wsa_id)
+            s = None
+            for ns in storages_of_wsa:
+                if ns.waste_type == transfer_data.waste_type:
+                    s = ns
+                    break
+            if s is not None:
+                self.storage_service.update_storage_size(s.id, query.new_size)
 
         vertices = {k: VertexModel(sz=v.sz, cap=v.cap) for k, v in graph.vertices.items()}
         edges = {k: [EdgeModel(next=edge.next, length=edge.length) for edge in edge_list] 
