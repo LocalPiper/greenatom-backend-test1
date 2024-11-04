@@ -52,6 +52,22 @@ class Algorithm:
             visited.add(curr_id)
 
         return res
+    
+    def generate_queries(self, waste_type : WasteType, transfer_amount : int, queue: PriorityQueue) -> List[int, Queue[StorageUpdateQuery]]:
+        left : int = transfer_amount
+        res = Queue()
+        while (left > 0) and (not queue.empty()):
+            _, wsa_id = queue.get()
+            v : Vertex = self.graph.vertices.get(wsa_id, None)
+            if (v is not None) and (v.cap > 0):
+                dif = v.cap - v.sz
+                if dif <= left:
+                    res.put(StorageUpdateQuery(wsa_id, waste_type, v.cap))
+                    left -= dif
+                else:
+                    res.put(StorageUpdateQuery(wsa_id, waste_type, v.sz + left))
+                    left = 0
+        return [left, res]
 
 
 # a surprise tool that will help me later
