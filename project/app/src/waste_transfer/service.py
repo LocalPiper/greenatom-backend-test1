@@ -8,7 +8,7 @@ from app.src.waste_transfer.schemas import EdgeModel, GraphModel, VertexModel, W
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
-from app.src.waste_transfer.utils import Graph, Vertex, Edge, print_paths, print_wsas
+from app.src.waste_transfer.utils import Graph, Vertex, Edge, Algorithm
 
 class WasteTransferService:
     def __init__(self, db: Session):
@@ -19,6 +19,7 @@ class WasteTransferService:
         self.wsa_service = WSAService(db)
 
     def transfer_waste(self, transfer_data: WasteTransferRequest):
+        # STEP 1: Graph building
         # find organization
         organization = self.organization_service.get_by_name(transfer_data.organization_name)
         if not organization:
@@ -62,9 +63,15 @@ class WasteTransferService:
         # build a graph
         graph : Graph = self.graph_builder(wsas, paths, transfer_data.waste_type)
 
+        # STEP 2: Shortest Path in Graph
+        algo : Algorithm = Algorithm(graph)
+        algo.build_queue()
+
+
         vertices = {k: VertexModel(sz=v.sz, cap=v.cap) for k, v in graph.vertices.items()}
         edges = {k: [EdgeModel(next=edge.next, length=edge.length) for edge in edge_list] 
                  for k, edge_list in graph.edges.items()}
+        
         
         return GraphModel(vertices=vertices, edges=edges)
 
