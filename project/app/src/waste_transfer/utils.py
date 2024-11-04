@@ -51,7 +51,7 @@ class Algorithm:
 
         return res
     
-    def generate_queries(self, waste_type : WasteType, transfer_amount : int, queue: PriorityQueue) -> List[int, Queue[StorageUpdateQuery]]:
+    def generate_queries(self, waste_type : WasteType, transfer_amount : int, queue: PriorityQueue):
         left : int = transfer_amount
         res = Queue()
         while (left > 0) and (not queue.empty()):
@@ -66,17 +66,3 @@ class Algorithm:
                     res.put(StorageUpdateQuery(wsa_id, waste_type, v.sz + left))
                     left = 0
         return [left, res]
-
-
-# a surprise tool that will help me later
-'''    
-def print_paths(lp : List[Path]):
-    for p in lp:
-        print([p.id, p.bidirectional, p.length, p.organization_id, p.wsa_start_id, p.wsa_end_id])
-    print()
-
-def print_wsas(lw : List[WSA]):
-    for w in lw:
-        print([w.id, w.name, w.storages])
-    print()
-'''

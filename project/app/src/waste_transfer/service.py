@@ -5,7 +5,7 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_transfer.schemas import EdgeModel, GraphModel, VertexModel, WasteTransferRequest, WasteType
+from app.src.waste_transfer.schemas import WasteTransferRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
@@ -70,10 +70,11 @@ class WasteTransferService:
         res = algorithm.generate_queries(transfer_data.waste_type, amount, algorithm.build_queue())
         remainder : int = res[0]
         queue : Queue = res[1]
-        
+
         # STEP 3: Execute Queries
         if remainder > 0:
             print("Impossible to unload storage!")
+        self.storage_service.update_storage_size(storage.id, remainder)
         while not queue.empty():
             query : StorageUpdateQuery = queue.get()
             storages_of_wsa = self.storage_service.get_storages_by_wsa_id(query.wsa_id)
@@ -84,13 +85,8 @@ class WasteTransferService:
                     break
             if s is not None:
                 self.storage_service.update_storage_size(s.id, query.new_size)
-
-        vertices = {k: VertexModel(sz=v.sz, cap=v.cap) for k, v in graph.vertices.items()}
-        edges = {k: [EdgeModel(next=edge.next, length=edge.length) for edge in edge_list] 
-                 for k, edge_list in graph.edges.items()}
         
-        
-        return GraphModel(vertices=vertices, edges=edges)
+        return self.storage_service.get_all_storages()
 
     
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
