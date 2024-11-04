@@ -8,7 +8,7 @@ from app.src.waste_transfer.schemas import EdgeModel, GraphModel, VertexModel, W
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
-from app.src.waste_transfer.utils import Graph, Vertex, Edge
+from app.src.waste_transfer.utils import Graph, Vertex, Edge, print_paths, print_wsas
 
 class WasteTransferService:
     def __init__(self, db: Session):
@@ -23,7 +23,6 @@ class WasteTransferService:
         organization = self.organization_service.get_by_name(transfer_data.organization_name)
         if not organization:
             raise ValueError("Organization not found!")
-        
         # find storage that is going to be unloaded
         storages : List[Storage] = self.storage_service.get_all_storages()
         storage : Storage = None
@@ -82,12 +81,13 @@ class WasteTransferService:
     
     def iterative_path_finder(self, wsas: List[WSA]):
         paths : List[Path] = []
-        for i in range(len(wsas) - 1):
-            for j in range(i + 1, len(wsas)):
+        for i in range(len(wsas)):
+            for j in range(len(wsas)):
+                if i == j:
+                    continue
                 path = self.path_service.get_path_from_wsas(wsas[i].id, wsas[j].id)
                 if path:
                     paths.append(path)
-        
         return paths
 
     def graph_builder(self, wsas: List[WSA], paths: List[Path], waste_type: WasteType) -> Graph:

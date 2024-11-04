@@ -26,7 +26,7 @@ class PathRepository:
          return self.db.query(Path).filter((Path.wsa_start_id == wsa_id) and (not Path.organization_id)).all()
     
     def get_path_from_wsas(self, start: int, end: int):
-         return self.db.query(Path).filter((Path.wsa_start_id == start) and (Path.wsa_end_id == end)).first()
+         return self.db.query(Path).filter(Path.wsa_start_id == start).filter(Path.wsa_end_id == end).first()
     
     def truncate_data(self):
          self.db.query(Path).delete()
