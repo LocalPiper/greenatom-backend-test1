@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.src.organizations.schemas import OrganizationCreate, Organization
 from app.src.organizations.service import OrganizationService
@@ -12,8 +12,11 @@ router = APIRouter()
 def create_organization(
     organization_data: OrganizationCreate, db: Session = Depends(get_db)
 ):
-    service = OrganizationService(db)
-    return service.create_organization(organization_data)
+    try:
+        service = OrganizationService(db)
+        return service.create_organization(organization_data)
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=str(ve))
 
 
 @router.get("/organizations/", response_model=List[Organization])

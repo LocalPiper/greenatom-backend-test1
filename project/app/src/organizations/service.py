@@ -12,6 +12,9 @@ class OrganizationService:
     def create_organization(
         self, organization_data: OrganizationCreate
     ) -> Organization:
+        possible_org = self.repository.get_by_name(organization_data.name)
+        if possible_org is not None:
+            raise ValueError("Organization with given name already exists!")
         db_org = self.repository.create_organization(organization_data)
         return Organization.from_orm(db_org)
 
