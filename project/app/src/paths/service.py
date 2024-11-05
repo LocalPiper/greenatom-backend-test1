@@ -10,6 +10,25 @@ class PathService:
         self.repository = PathRepository(db)
 
     def create_path(self, path_data: PathCreate) -> Path:
+        possible_path = self.repository.get_path_from_org_and_wsa(
+            path_data.organization_id, path_data.wsa_start_id
+        )
+        possible_path2 = self.repository.get_path_from_wsas(
+            path_data.wsa_start_id, path_data.wsa_end_id
+        )
+        possible_path3 = self.repository.get_path_from_wsas(
+            path_data.wsa_end_id, path_data.wsa_start_id
+        )
+        possible_path4 = self.repository.get_path_from_org_and_wsa(
+            path_data.wsa_start_id, path_data.organization_id
+        )
+        if (
+            (possible_path is not None)
+            or (possible_path2 is not None)
+            or (possible_path3 is not None)
+            or (possible_path4 is not None)
+        ):
+            raise ValueError("Path that uses these points already exists!")
         db_path = self.repository.create_path(path_data)
         return Path.from_orm(db_path)
 

@@ -28,14 +28,14 @@ class PathRepository:
     def get_all_paths(self) -> List[PathModel]:
         return self.db.query(PathModel).all()
 
-    def get_paths_from_org(self, organization_id: int) -> list[PathModel]:
+    def get_paths_from_org(self, organization_id: int) -> List[PathModel]:
         return (
             self.db.query(PathModel)
             .filter(PathModel.organization_id == organization_id)
             .all()
         )
 
-    def get_paths_from_wsa(self, wsa_id: int) -> list[PathModel]:
+    def get_paths_from_wsa(self, wsa_id: int) -> List[PathModel]:
         return (
             self.db.query(PathModel)
             .filter(
@@ -50,6 +50,17 @@ class PathRepository:
         return (
             self.db.query(PathModel)
             .filter(PathModel.wsa_start_id == start, PathModel.wsa_end_id == end)
+            .first()
+        )
+
+    def get_path_from_org_and_wsa(
+        self, org_id: int, wsa_id: int
+    ) -> Optional[PathModel]:
+        return (
+            self.db.query(PathModel)
+            .filter(
+                PathModel.organization_id == org_id, PathModel.wsa_start_id == wsa_id
+            )
             .first()
         )
 
