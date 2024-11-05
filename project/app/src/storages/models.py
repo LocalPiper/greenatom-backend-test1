@@ -1,16 +1,10 @@
-import enum
 from sqlalchemy import Column, ForeignKey, Integer, Enum
 from sqlalchemy.orm import relationship
 from app.src.database import Base
+from app.src.schemas import WasteType
 
 
-class WasteType(str, enum.Enum):
-    BIO = "bio"
-    GLASS = "glass"
-    PLASTIC = "plastic"
-
-
-class Storage(Base):
+class StorageModel(Base):
     __tablename__ = "storages"
     id = Column(Integer, primary_key=True, index=True)
     waste_type = Column(Enum(WasteType), index=True)

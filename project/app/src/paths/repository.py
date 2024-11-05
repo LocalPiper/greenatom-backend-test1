@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy import and_
 from sqlalchemy.orm import Session
 from app.src.paths.models import PathModel
@@ -25,7 +25,7 @@ class PathRepository:
     def get_path(self, path_id: int) -> Optional[PathModel]:
         return self.db.query(PathModel).filter(PathModel.id == path_id).first()
 
-    def get_all_paths(self) -> list[PathModel]:
+    def get_all_paths(self) -> List[PathModel]:
         return self.db.query(PathModel).all()
 
     def get_paths_from_org(self, organization_id: int) -> list[PathModel]:

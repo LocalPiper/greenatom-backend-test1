@@ -13,7 +13,7 @@ class PathService:
         db_path = self.repository.create_path(path_data)
         return Path.from_orm(db_path)
 
-    def get_path(self, path_id: int) -> Optional[Path]:
+    def get_path(self, path_id: int) -> Optional[PathModel]:
         db_path = self.repository.get_path(path_id)
         return Path.from_orm(db_path) if db_path else None
 
@@ -22,16 +22,13 @@ class PathService:
         return [Path.from_orm(path) for path in db_paths]
 
     def get_paths_from_org(self, organization_id: int) -> List[PathModel]:
-        db_paths = self.repository.get_paths_from_org(organization_id)
-        return db_paths
+        return self.repository.get_paths_from_org(organization_id)
 
     def get_paths_from_wsa(self, wsa_id: int) -> List[PathModel]:
-        db_paths = self.repository.get_paths_from_wsa(wsa_id)
-        return db_paths
+        return self.repository.get_paths_from_wsa(wsa_id)
 
     def get_path_from_wsas(self, start: int, end: int) -> PathModel:
-        db_path = self.repository.get_path_from_wsas(start, end)
-        return db_path
+        return self.repository.get_path_from_wsas(start, end)
 
     def truncate_data(self) -> None:
         self.repository.truncate_data()

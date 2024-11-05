@@ -11,7 +11,7 @@ from app.src.waste_logic.schemas import (
     WasteGenerationRequest,
     WasteRecycleRequest,
 )
-from app.src.storages.models import Storage
+from app.src.storages.models import StorageModel
 from app.src.paths.models import PathModel
 from app.src.wsas.models import WSA
 from app.src.organizations.models import Organization
@@ -32,8 +32,10 @@ class WasteTransferService:
         )
         if not organization:
             raise ValueError("Organization not found!")
-        storage: Storage = self.storage_service.get_storage_by_org_id_and_waste_type(
-            organization.id, transfer_data.waste_type
+        storage: StorageModel = (
+            self.storage_service.get_storage_by_org_id_and_waste_type(
+                organization.id, transfer_data.waste_type
+            )
         )
         if not storage:
             raise ValueError("Storage not found!")
@@ -62,7 +64,7 @@ class WasteTransferService:
         return remainder, queue
 
     def execute_queries(
-        self, remainder: int, queue: Queue, storage: Storage, waste_type: WasteType
+        self, remainder: int, queue: Queue, storage: StorageModel, waste_type: WasteType
     ):
         if remainder > 0:
             print("Impossible to unload storage!")
@@ -115,7 +117,7 @@ class WasteTransferService:
 
     def build_vertices(self, wsas: List[WSA], waste_type: WasteType, g: Graph) -> Graph:
         for wsa in wsas:
-            storages: List[Storage] = self.storage_service.get_storages_by_wsa_id(
+            storages: List[StorageModel] = self.storage_service.get_storages_by_wsa_id(
                 wsa.id
             )
             b = False
@@ -155,11 +157,9 @@ class WasteProcessingService:
         if not organization:
             raise ValueError("Organization not found!")
 
-        storages: List[Storage] = [
-            storage
-            for storage in self.storage_service.get_all_storages()
-            if storage.organization_id == organization.id
-        ]
+        storages: List[StorageModel] = self.storage_service.get_storages_by_org_id(
+            organization.id
+        )
         if generation_data.waste_type is not None:
             for storage in storages:
                 if storage.waste_type == generation_data.waste_type:
@@ -172,7 +172,7 @@ class WasteProcessingService:
                 "No storage with the given waste type exist in this organization!"
             )
         else:
-            res_list: List[Storage] = []
+            res_list: List[StorageModel] = []
             for storage in storages:
                 res_list.append(
                     self.storage_service.update_storage_size(
@@ -188,18 +188,16 @@ class WasteProcessingService:
         if not wsa:
             raise ValueError("WSA not found!")
 
-        storages: List[Storage] = [
-            storage
-            for storage in self.storage_service.get_all_storages()
-            if storage.wsa_id == wsa.id
-        ]
+        storages: List[StorageModel] = self.storage_service.get_storages_by_wsa_id(
+            wsa.id
+        )
         if recycle_data.waste_type is not None:
             for storage in storages:
                 if storage.waste_type == recycle_data.waste_type:
                     return [self.storage_service.update_storage_size(storage.id, 0)]
             raise ValueError("No storage with the given waste type exist in this WSA!")
         else:
-            res_list: List[Storage] = []
+            res_list: List[StorageModel] = []
             for storage in storages:
                 res_list.append(self.storage_service.update_storage_size(storage.id, 0))
             if len(res_list) == 0:

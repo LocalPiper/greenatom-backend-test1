@@ -8,4 +8,4 @@ class WSA(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
 
-    storages = relationship("Storage", back_populates="wsa")
+    storages = relationship("StorageModel", back_populates="wsa")
