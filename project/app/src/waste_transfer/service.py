@@ -67,7 +67,7 @@ class WasteTransferService:
         # STEP 2: Shortest Path in Graph
         algorithm : Algorithm = Algorithm(graph)
         amount = max(0, min(transfer_data.quantity, storage.size))
-        res = algorithm.generate_queries(transfer_data.waste_type, amount, algorithm.build_queue())
+        res = algorithm.generate_queries(amount, algorithm.build_queue())
         remainder : int = res[0]
         queue : Queue = res[1]
 

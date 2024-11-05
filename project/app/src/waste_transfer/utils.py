@@ -27,9 +27,8 @@ class Graph:
         self.edges[id].append(e)
 
 class StorageUpdateQuery:
-    def __init__(self, wsa_id : int, waste_type : WasteType, new_size : int):
+    def __init__(self, wsa_id : int, new_size : int):
         self.wsa_id = wsa_id
-        self.waste_type = waste_type
         self.new_size = new_size
 
 class Algorithm:
@@ -51,7 +50,7 @@ class Algorithm:
 
         return res
     
-    def generate_queries(self, waste_type : WasteType, transfer_amount : int, queue: PriorityQueue):
+    def generate_queries(self, transfer_amount : int, queue: PriorityQueue):
         left : int = transfer_amount
         res = Queue()
         while (left > 0) and (not queue.empty()):
@@ -60,9 +59,9 @@ class Algorithm:
             if (v is not None) and (v.cap > 0):
                 dif = v.cap - v.sz
                 if dif <= left:
-                    res.put(StorageUpdateQuery(wsa_id, waste_type, v.cap))
+                    res.put(StorageUpdateQuery(wsa_id, v.cap))
                     left -= dif
                 else:
-                    res.put(StorageUpdateQuery(wsa_id, waste_type, v.sz + left))
+                    res.put(StorageUpdateQuery(wsa_id, v.sz + left))
                     left = 0
         return [left, res]
