@@ -7,13 +7,12 @@ from app.src.database import get_db
 
 router = APIRouter()
 
+
 @router.post("/wsas/", response_model=WSA)
-def create_wsa(
-    wsa_data: WSACreate,
-    db: Session = Depends(get_db)
-):
+def create_wsa(wsa_data: WSACreate, db: Session = Depends(get_db)):
     service = WSAService(db)
     return service.create_wsa(wsa_data)
+
 
 @router.get("/wsas/", response_model=List[WSA])
 def get_all_wsas(db: Session = Depends(get_db)):

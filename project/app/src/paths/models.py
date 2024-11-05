@@ -1,6 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer
 from app.src.database import Base
 
+
 class Path(Base):
     __tablename__ = "paths"
     id = Column(Integer, primary_key=True, index=True)

@@ -7,13 +7,12 @@ from app.src.database import get_db
 
 router = APIRouter()
 
+
 @router.post("/paths/", response_model=Path)
-def create_path(
-    path_data: PathCreate,
-    db: Session = Depends(get_db)
-):
+def create_path(path_data: PathCreate, db: Session = Depends(get_db)):
     service = PathService(db)
     return service.create_path(path_data)
+
 
 @router.get("/paths/", response_model=List[Path])
 def get_all_paths(db: Session = Depends(get_db)):

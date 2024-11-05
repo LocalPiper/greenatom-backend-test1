@@ -4,6 +4,7 @@ from app.src.wsas.repository import WSARepository
 from app.src.wsas.schemas import WSACreate, WSA
 from app.src.paths.models import Path
 
+
 class WSAService:
     def __init__(self, db: Session):
         self.repository = WSARepository(db)
@@ -13,22 +14,22 @@ class WSAService:
 
     def get_wsa(self, wsa_id: int) -> WSA:
         return self.repository.get_wsa(wsa_id)
-    
+
     def get_by_name(self, wsa_name: str) -> WSA:
         return self.repository.get_by_name(wsa_name)
-        
+
     def get_all_wsas(self) -> List[WSA]:
         return self.repository.get_all_wsas()
-    
-    def get_wsas_from_paths(self, paths : List[Path]):
-        wsas : List[WSA] = []
-        wsas_id_set : Set[int] = set()
+
+    def get_wsas_from_paths(self, paths: List[Path]):
+        wsas: List[WSA] = []
+        wsas_id_set: Set[int] = set()
         for p in paths:
             wsa = self.get_wsa(p.wsa_start_id)
             if wsa:
                 wsas.append(wsa)
                 wsas_id_set.add(wsa.id)
         return wsas, wsas_id_set
-    
+
     def truncate_data(self) -> None:
         self.repository.truncate_data()

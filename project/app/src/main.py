@@ -19,13 +19,15 @@ app.include_router(waste_logic_router, prefix="/api")
 
 
 @app.get("/")
-async def read_root():
+async def read_root() -> dict[str, str]:
     return {"message": "Welcome to the main page!"}
 
+
 @app.post("/script")
-def generate_sample_data(db: Session = Depends(get_db)):
+def generate_sample_data(db: Session = Depends(get_db)) -> None:
     create_sample_data(db)
 
-@app.on_event("startup")
-def startup_event(db: Session = next(get_db())):
+
+@app.on_event("startup")  # type: ignore
+def startup_event(db: Session = next(get_db())) -> None:
     init_db()
