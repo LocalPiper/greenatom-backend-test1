@@ -30,4 +30,4 @@ def update_storage_size(storage_id: int, new_size: int, db: Session = Depends(ge
         updated_storage = service.update_storage_size(storage_id, new_size)
         return updated_storage
     except ValueError as ve:
-        raise HTTPException(status_code=422, detail=repr(ve))
+        raise HTTPException(status_code=422, detail=str(ve))
