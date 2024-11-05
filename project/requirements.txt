@@ -4,3 +4,4 @@ sqlalchemy
 pydantic
 databases
 psycopg2-binary
+python-dotenv

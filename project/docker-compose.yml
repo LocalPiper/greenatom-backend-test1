@@ -3,9 +3,9 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_USER: fastapi
-      POSTGRES_PASSWORD: fastapi
-      POSTGRES_DB: project
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -16,5 +16,7 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      - USE_POSTGRES=1
 volumes:
   postgres_data:
