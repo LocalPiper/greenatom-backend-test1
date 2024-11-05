@@ -29,7 +29,7 @@ class StorageRepository:
     def get_all_storages(self):
         return self.db.query(Storage).all()
 
-    def update_storage_size(self, storage_id: int, new_size: id):
+    def update_storage_size(self, storage_id: int, new_size: int):
         db_storage = self.get_storage(storage_id)
         if db_storage:
             db_storage.size = new_size

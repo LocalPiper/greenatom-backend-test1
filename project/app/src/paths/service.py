@@ -1,7 +1,8 @@
 from typing import List
 from sqlalchemy.orm import Session
 from app.src.paths.repository import PathRepository
-from app.src.paths.schemas import PathCreate, Path
+from app.src.paths.schemas import PathCreate
+from app.src.paths.models import Path
 
 
 class PathService:

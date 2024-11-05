@@ -1,8 +1,9 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.src.schemas import WasteType
 from app.src.storages.repository import StorageRepository
-from app.src.storages.schemas import StorageCreate, Storage
+from app.src.storages.schemas import StorageCreate
+from app.src.storages.models import Storage
 
 
 class StorageService:
@@ -25,14 +26,14 @@ class StorageService:
         self, id: int, waste_type: WasteType
     ) -> Storage:
         storages: List[Storage] = self.get_all_storages()
-        storage: Storage = None
+        storage: Optional[Storage] = None
         for s in storages:
             if (s.organization_id == id) and (s.waste_type == waste_type):
                 storage = s
                 break
         return storage
 
-    def update_storage_size(self, storage_id: int, new_size: int) -> Storage:
+    def update_storage_size(self, storage_id: int, new_size: int) -> Optional[Storage]:
         if not self.repository.get_storage(storage_id):
             print("no storage with given id")
         elif (self.repository.get_storage(storage_id).capacity < new_size) or (

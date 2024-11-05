@@ -1,7 +1,8 @@
 from typing import List
 from sqlalchemy.orm import Session
 from app.src.organizations.repository import OrganizationRepository
-from app.src.organizations.schemas import OrganizationCreate, Organization
+from app.src.organizations.schemas import OrganizationCreate
+from app.src.organizations.models import Organization
 
 
 class OrganizationService:
