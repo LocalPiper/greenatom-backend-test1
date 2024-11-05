@@ -1,7 +1,7 @@
 from typing import List
 from sqlalchemy.orm import Session
 from app.src.storages.repository import StorageRepository
-from app.src.storages.schemas import StorageCreate, Storage
+from app.src.storages.schemas import StorageCreate, Storage, WasteType
 
 class StorageService:
     def __init__(self, db: Session):
@@ -18,6 +18,15 @@ class StorageService:
     
     def get_all_storages(self) -> List[Storage]:
         return self.repository.get_all_storages()
+    
+    def get_storage_by_org_id_and_waste_type(self, id : int, waste_type: WasteType) -> Storage:
+        storages : List[Storage] = self.get_all_storages()
+        storage : Storage = None
+        for s in storages:
+            if (s.organization_id == id) and (s.waste_type == waste_type):
+                storage = s
+                break
+        return storage
     
     def update_storage_size(self, storage_id: int, new_size: int) -> Storage:
         if not self.repository.get_storage(storage_id):

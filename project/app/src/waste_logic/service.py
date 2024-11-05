@@ -9,6 +9,7 @@ from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationReq
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
+from app.src.organizations.models import Organization
 from app.src.waste_logic.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
 
 class WasteTransferService:
@@ -19,59 +20,38 @@ class WasteTransferService:
         self.path_service = PathService(db)
         self.wsa_service = WSAService(db)
 
-    def transfer_waste(self, transfer_data: WasteTransferRequest):
-        # STEP 1: Graph building
-        # find organization
-        organization = self.organization_service.get_by_name(transfer_data.organization_name)
+    def prepare_data(self, transfer_data: WasteTransferRequest):
+        organization : Organization = self.organization_service.get_by_name(transfer_data.organization_name)
         if not organization:
             raise ValueError("Organization not found!")
-        # find storage that is going to be unloaded
-        storages : List[Storage] = self.storage_service.get_all_storages()
-        storage : Storage = None
-        for s in storages:
-            if (s.organization_id == organization.id) and (s.waste_type == transfer_data.waste_type):
-                storage = s
-                break
-        
+        storage: Storage = self.storage_service.get_storage_by_org_id_and_waste_type(organization.id, transfer_data.waste_type)
         if not storage:
             raise ValueError("Storage not found!")
-        
-        # find all paths that go from this organization
         paths : List[Path] = self.path_service.get_paths_from_org(organization.id)
-
         if len(paths) == 0:
             raise ValueError("No paths from this organization - can't transfer waste!")
-
-        # find all wsas that are connected to this organization
-        wsas : List[WSA] = []
-        wsas_id_set : Set[int] = set()
-        for p in paths:
-            wsa = self.wsa_service.get_wsa(p.wsa_start_id)
-            if wsa:
-                wsas.append(wsa)
-                wsas_id_set.add(wsa.id)
-        
-        # for each wsa find all wsas connected to them
+        wsas, wsas_id_set = self.wsa_service.get_wsas_from_paths(paths)
         next_wsas : List[WSA] = []
         for wsa in wsas:
             self.recursive_wsa_finder(wsa, wsas_id_set, next_wsas)
-        
         wsas = list(set(wsas + next_wsas))
-
-        # for each pair of wsas find a path
         paths = list(set(paths + self.iterative_path_finder(wsas)))
+        return wsas, paths, storage
 
-        # build a graph
+    def build_graph(self, transfer_data: WasteTransferRequest):
+        wsas, paths, storage = self.prepare_data(transfer_data)
         graph : Graph = self.graph_builder(wsas, paths, transfer_data.waste_type)
+        return graph, storage
 
-        # STEP 2: Shortest Path in Graph
+    def get_queries(self, graph: Graph, quantity : int, sz : int):
         algorithm : Algorithm = Algorithm(graph)
-        amount = max(0, min(transfer_data.quantity, storage.size))
+        amount = max(0, min(quantity, sz))
         res = algorithm.generate_queries(amount, algorithm.build_queue())
         remainder : int = res[0]
         queue : Queue = res[1]
+        return remainder, queue
 
-        # STEP 3: Execute Queries
+    def execute_queries(self, remainder : int, queue: Queue, storage : Storage, waste_type: WasteType):
         if remainder > 0:
             print("Impossible to unload storage!")
         self.storage_service.update_storage_size(storage.id, remainder)
@@ -80,12 +60,16 @@ class WasteTransferService:
             storages_of_wsa = self.storage_service.get_storages_by_wsa_id(query.wsa_id)
             s = None
             for ns in storages_of_wsa:
-                if ns.waste_type == transfer_data.waste_type:
+                if ns.waste_type == waste_type:
                     s = ns
                     break
             if s is not None:
                 self.storage_service.update_storage_size(s.id, query.new_size)
-        
+    
+    def transfer_waste(self, transfer_data: WasteTransferRequest):
+        graph, storage = self.build_graph(transfer_data)
+        remainder, queue = self.get_queries(graph, transfer_data.quantity, storage.size)
+        self.execute_queries(remainder, queue, storage, transfer_data.waste_type)
         return self.storage_service.get_all_storages()
 
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
