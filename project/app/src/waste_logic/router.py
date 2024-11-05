@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.src.database import get_db
 from app.src.storages.schemas import Storage
-from app.src.waste_transfer.schemas import WasteTransferRequest, WasteGenerationRequest
-from app.src.waste_transfer.service import WasteTransferService, WasteProcessingService
+from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest
+from app.src.waste_logic.service import WasteTransferService, WasteProcessingService
 
 router = APIRouter()
 

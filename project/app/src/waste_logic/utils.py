@@ -1,6 +1,4 @@
-from typing import List
 from queue import Queue, PriorityQueue
-from app.src.waste_transfer.schemas import WasteType
 
 
 class Vertex:

@@ -5,11 +5,11 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_transfer.schemas import WasteTransferRequest, WasteGenerationRequest, WasteType
+from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
-from app.src.waste_transfer.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
+from app.src.waste_logic.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
 
 class WasteTransferService:
     def __init__(self, db: Session):
