@@ -11,6 +11,14 @@ class StorageService:
         self.repository = StorageRepository(db)
 
     def create_storage(self, storage_data: StorageCreate) -> Storage:
+        possible_storage = self.repository.get_storage_by_org_id_and_waste_type(
+            storage_data.organization_id, storage_data.waste_type
+        )
+        possible_storage2 = self.repository.get_storage_by_wsa_id_and_waste_type(
+            storage_data.wsa_id, storage_data.waste_type
+        )
+        if (possible_storage is not None) or (possible_storage2 is not None):
+            raise ValueError("Given Organization/WSA already has this type of storage!")
         db_storage = self.repository.create_storage(storage_data)
         return Storage.from_orm(db_storage)
 

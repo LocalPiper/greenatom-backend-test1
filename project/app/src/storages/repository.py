@@ -44,6 +44,14 @@ class StorageRepository:
             .first()
         )
 
+    def get_storage_by_wsa_id_and_waste_type(self, id: int, waste_type: WasteType):
+        return (
+            self.db.query(StorageModel)
+            .filter(StorageModel.waste_type == waste_type)
+            .filter(StorageModel.wsa_id == id)
+            .first()
+        )
+
     def update_storage_size(
         self, storage_id: int, new_size: int
     ) -> Optional[StorageModel]:
