@@ -13,6 +13,9 @@ class WSAService:
     def get_wsa(self, wsa_id: int) -> WSA:
         return self.repository.get_wsa(wsa_id)
     
+    def get_by_name(self, wsa_name: str) -> WSA:
+        return self.repository.get_by_name(wsa_name)
+        
     def get_all_wsas(self) -> List[WSA]:
         return self.repository.get_all_wsas()
     

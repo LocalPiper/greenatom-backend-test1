@@ -15,3 +15,7 @@ class WasteTransferRequest(BaseModel):
 class WasteGenerationRequest(BaseModel):
     organization_name: str
     waste_type: Optional[WasteType] = None
+
+class WasteRecycleRequest(BaseModel):
+    wsa_name: str
+    waste_type: Optional[WasteType] = None

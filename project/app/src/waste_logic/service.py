@@ -5,7 +5,7 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest, WasteType
+from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest, WasteRecycleRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
@@ -156,14 +156,31 @@ class WasteProcessingService:
         if generation_data.waste_type is not None:
             for storage in storages:
                 if storage.waste_type == generation_data.waste_type:
-                    self.storage_service.update_storage_size(storage.id, storage.capacity)
-                    return [self.storage_service.get_storage(storage.id)]
+                    return [self.storage_service.update_storage_size(storage.id, storage.capacity)]
             raise ValueError("No storage with the given waste type exist in this organization!")
         else:
             res_list : List[Storage] = []
             for storage in storages:
-                self.storage_service.update_storage_size(storage.id, storage.capacity)
-                res_list.append(self.storage_service.get_storage(storage.id))
+                res_list.append(self.storage_service.update_storage_size(storage.id, storage.capacity))
             if len(res_list) == 0:
                 raise ValueError("Organization has no storages!")
+            return res_list
+
+    def recycle_waste(self, recycle_data: WasteRecycleRequest):
+        wsa = self.wsa_service.get_by_name(recycle_data.wsa_name)
+        if not wsa:
+            raise ValueError("WSA not found!")
+        
+        storages : List[Storage] = [storage for storage in self.storage_service.get_all_storages() if storage.wsa_id == wsa.id]
+        if recycle_data.waste_type is not None:
+            for storage in storages:
+                if storage.waste_type == recycle_data.waste_type:
+                    return [self.storage_service.update_storage_size(storage.id, 0)]
+            raise ValueError("No storage with the given waste type exist in this WSA!")
+        else:
+            res_list : List[Storage] = []
+            for storage in storages:
+                res_list.append(self.storage_service.update_storage_size(storage.id, 0))
+            if len(res_list) == 0:
+                raise ValueError("WSA has no storages!")
             return res_list
