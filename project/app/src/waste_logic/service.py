@@ -1,11 +1,12 @@
 from typing import List, Set
 from queue import Queue
 from sqlalchemy.orm import Session
+from app.src.schemas import WasteType
 from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest, WasteRecycleRequest, WasteType
+from app.src.waste_logic.schemas import WasteTransferRequest, WasteGenerationRequest, WasteRecycleRequest
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA

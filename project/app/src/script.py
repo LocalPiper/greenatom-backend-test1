@@ -1,7 +1,7 @@
 # script.py
 
-from sqlalchemy import text
 from sqlalchemy.orm import Session
+from app.src.schemas import WasteType
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.storages.service import StorageService
@@ -10,12 +10,6 @@ from app.src.organizations.schemas import OrganizationCreate
 from app.src.wsas.schemas import WSACreate
 from app.src.storages.schemas import StorageCreate
 from app.src.paths.schemas import PathCreate
-from enum import Enum
-
-class WasteType(str, Enum):
-    BIO = "bio"
-    GLASS = "glass"
-    PLASTIC = "plastic"
 
 def create_sample_data(db: Session):
     org_service = OrganizationService(db)

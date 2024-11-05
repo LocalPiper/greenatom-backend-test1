@@ -1,12 +1,6 @@
-from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
-
-
-class WasteType(str, Enum):
-    BIO = "bio"
-    GLASS = "glass"
-    PLASTIC = "plastic"
+from app.src.schemas import WasteType
 
 class StorageBase(BaseModel):
     waste_type: WasteType

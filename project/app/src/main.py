@@ -3,7 +3,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.src.database import get_db, init_db
 from app.src.organizations.router import router as organizations_router
-from app.src.script import truncate_data, create_sample_data
+from app.src.script import create_sample_data
 from app.src.wsas.router import router as wsas_router
 from app.src.storages.router import router as storages_router
 from app.src.paths.router import router as paths_router

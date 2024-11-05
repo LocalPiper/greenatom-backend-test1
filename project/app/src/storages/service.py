@@ -1,7 +1,8 @@
 from typing import List
 from sqlalchemy.orm import Session
+from app.src.schemas import WasteType
 from app.src.storages.repository import StorageRepository
-from app.src.storages.schemas import StorageCreate, Storage, WasteType
+from app.src.storages.schemas import StorageCreate, Storage
 
 class StorageService:
     def __init__(self, db: Session):
