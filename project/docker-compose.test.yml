@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_password
+      POSTGRES_DB: test_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data_test:/var/lib/postgresql/data
+
+  web:
+    build: .
+    environment:
+      DATABASE_URL: "postgresql://test_user:test_password@db:5432/test_db"
+    depends_on:
+      - db
+    command: ["pytest", "tests"]
+
+volumes:
+  postgres_data_test:
