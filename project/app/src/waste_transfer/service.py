@@ -5,7 +5,7 @@ from app.src.storages.service import StorageService
 from app.src.organizations.service import OrganizationService
 from app.src.wsas.service import WSAService
 from app.src.paths.service import PathService
-from app.src.waste_transfer.schemas import WasteTransferRequest, WasteType
+from app.src.waste_transfer.schemas import WasteTransferRequest, WasteGenerationRequest, WasteType
 from app.src.storages.models import Storage
 from app.src.paths.models import Path
 from app.src.wsas.models import WSA
@@ -88,7 +88,6 @@ class WasteTransferService:
         
         return self.storage_service.get_all_storages()
 
-    
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
         paths : List[Path] = self.path_service.get_paths_from_wsa(wsa.id)
         for path in paths:
@@ -141,3 +140,30 @@ class WasteTransferService:
                     g.add_edge(path.wsa_start_id, Edge(path.wsa_end_id, path.length))
         return g
             
+class WasteProcessingService:
+    def __init__(self, db: Session):
+        self.db = db
+        self.storage_service = StorageService(db)
+        self.organization_service = OrganizationService(db)
+        self.wsa_service = WSAService(db)
+    
+    def generate_waste(self, generation_data: WasteGenerationRequest):
+        organization = self.organization_service.get_by_name(generation_data.organization_name)
+        if not organization:
+            raise ValueError("Organization not found!")
+        
+        storages : List[Storage] = [storage for storage in self.storage_service.get_all_storages() if storage.organization_id == organization.id]
+        if generation_data.waste_type is not None:
+            for storage in storages:
+                if storage.waste_type == generation_data.waste_type:
+                    self.storage_service.update_storage_size(storage.id, storage.capacity)
+                    return [self.storage_service.get_storage(storage.id)]
+            raise ValueError("No storage with the given waste type exist in this organization!")
+        else:
+            res_list : List[Storage] = []
+            for storage in storages:
+                self.storage_service.update_storage_size(storage.id, storage.capacity)
+                res_list.append(self.storage_service.get_storage(storage.id))
+            if len(res_list) == 0:
+                raise ValueError("Organization has no storages!")
+            return res_list

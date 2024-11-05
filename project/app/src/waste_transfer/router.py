@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.src.database import get_db
 from app.src.storages.schemas import Storage
-from app.src.waste_transfer.schemas import WasteTransferRequest
-from app.src.waste_transfer.service import WasteTransferService
+from app.src.waste_transfer.schemas import WasteTransferRequest, WasteGenerationRequest
+from app.src.waste_transfer.service import WasteTransferService, WasteProcessingService
 
 router = APIRouter()
 
@@ -15,3 +15,11 @@ def transfer_waste(
 ):
     service = WasteTransferService(db)
     return service.transfer_waste(transfer_data)
+
+@router.patch("/generate_waste", response_model=List[Storage])
+def generate_waste(
+    generation_data: WasteGenerationRequest,
+    db: Session = Depends(get_db)
+):
+    service = WasteProcessingService(db)
+    return service.generate_waste(generation_data)

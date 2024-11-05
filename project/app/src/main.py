@@ -11,10 +11,10 @@ from app.src.waste_transfer.router import router as transfer_router
 
 app = FastAPI()
 
-app.include_router(organizations_router, prefix="/api")
-app.include_router(wsas_router, prefix="/api")
-app.include_router(storages_router, prefix="/api")
-app.include_router(paths_router, prefix="/api")
+app.include_router(organizations_router, prefix="/api/internal")
+app.include_router(wsas_router, prefix="/api/internal")
+app.include_router(storages_router, prefix="/api/internal")
+app.include_router(paths_router, prefix="/api/internal")
 app.include_router(transfer_router, prefix="/api")
 
 
