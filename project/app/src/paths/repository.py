@@ -1,14 +1,16 @@
+from typing import Optional
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
+from app.src.paths.models import PathModel
 from app.src.paths.schemas import PathCreate
-from app.src.paths.models import Path
 
 
 class PathRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_path(self, path: PathCreate):
-        db_path = Path(
+    def create_path(self, path: PathCreate) -> PathModel:
+        db_path = PathModel(
             length=path.length,
             bidirectional=path.bidirectional,
             organization_id=path.organization_id,
@@ -20,30 +22,37 @@ class PathRepository:
         self.db.refresh(db_path)
         return db_path
 
-    def get_path(self, path_id: int):
-        return self.db.query(Path).filter(Path.id == path_id).first()
+    def get_path(self, path_id: int) -> Optional[PathModel]:
+        return self.db.query(PathModel).filter(PathModel.id == path_id).first()
 
-    def get_all_paths(self):
-        return self.db.query(Path).all()
+    def get_all_paths(self) -> list[PathModel]:
+        return self.db.query(PathModel).all()
 
-    def get_paths_from_org(self, organization_id: int):
-        return self.db.query(Path).filter(Path.organization_id == organization_id).all()
-
-    def get_paths_from_wsa(self, wsa_id: int):
+    def get_paths_from_org(self, organization_id: int) -> list[PathModel]:
         return (
-            self.db.query(Path)
-            .filter((Path.wsa_start_id == wsa_id) and (not Path.organization_id))
+            self.db.query(PathModel)
+            .filter(PathModel.organization_id == organization_id)
             .all()
         )
 
-    def get_path_from_wsas(self, start: int, end: int):
+    def get_paths_from_wsa(self, wsa_id: int) -> list[PathModel]:
         return (
-            self.db.query(Path)
-            .filter(Path.wsa_start_id == start)
-            .filter(Path.wsa_end_id == end)
+            self.db.query(PathModel)
+            .filter(
+                and_(
+                    PathModel.wsa_start_id == wsa_id, PathModel.organization_id == None
+                )
+            )
+            .all()
+        )
+
+    def get_path_from_wsas(self, start: int, end: int) -> Optional[PathModel]:
+        return (
+            self.db.query(PathModel)
+            .filter(PathModel.wsa_start_id == start, PathModel.wsa_end_id == end)
             .first()
         )
 
-    def truncate_data(self):
-        self.db.query(Path).delete()
+    def truncate_data(self) -> None:
+        self.db.query(PathModel).delete()
         self.db.commit()

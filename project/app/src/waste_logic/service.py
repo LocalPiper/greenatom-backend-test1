@@ -12,7 +12,7 @@ from app.src.waste_logic.schemas import (
     WasteRecycleRequest,
 )
 from app.src.storages.models import Storage
-from app.src.paths.models import Path
+from app.src.paths.models import PathModel
 from app.src.wsas.models import WSA
 from app.src.organizations.models import Organization
 from app.src.waste_logic.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
@@ -37,7 +37,7 @@ class WasteTransferService:
         )
         if not storage:
             raise ValueError("Storage not found!")
-        paths: List[Path] = self.path_service.get_paths_from_org(organization.id)
+        paths: List[PathModel] = self.path_service.get_paths_from_org(organization.id)
         if len(paths) == 0:
             raise ValueError("No paths from this organization - can't transfer waste!")
         wsas, wsas_id_set = self.wsa_service.get_wsas_from_paths(paths)
@@ -85,7 +85,7 @@ class WasteTransferService:
         return self.storage_service.get_all_storages()
 
     def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
-        paths: List[Path] = self.path_service.get_paths_from_wsa(wsa.id)
+        paths: List[PathModel] = self.path_service.get_paths_from_wsa(wsa.id)
         for path in paths:
             if path.wsa_end_id not in s:
                 next_wsa = self.wsa_service.get_wsa(path.wsa_end_id)
@@ -95,7 +95,7 @@ class WasteTransferService:
                     self.recursive_wsa_finder(next_wsa, s, wsas)
 
     def iterative_path_finder(self, wsas: List[WSA]):
-        paths: List[Path] = []
+        paths: List[PathModel] = []
         for i in range(len(wsas)):
             for j in range(len(wsas)):
                 if i == j:
@@ -106,7 +106,7 @@ class WasteTransferService:
         return paths
 
     def graph_builder(
-        self, wsas: List[WSA], paths: List[Path], waste_type: WasteType
+        self, wsas: List[WSA], paths: List[PathModel], waste_type: WasteType
     ) -> Graph:
         g: Graph = Graph()
         g = self.build_vertices(wsas, waste_type, g)
@@ -128,7 +128,7 @@ class WasteTransferService:
                 g.add_vertex(wsa.id, Vertex())
         return g
 
-    def build_edges(self, paths: List[Path], g: Graph) -> Graph:
+    def build_edges(self, paths: List[PathModel], g: Graph) -> Graph:
         for path in paths:
             if path.bidirectional:
                 g.add_edge(path.wsa_start_id, Edge(path.wsa_end_id, path.length))

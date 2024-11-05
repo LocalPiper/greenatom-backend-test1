@@ -10,8 +10,11 @@ router = APIRouter()
 
 @router.post("/storages/", response_model=Storage)
 def create_storage(storage_data: StorageCreate, db: Session = Depends(get_db)):
-    service = StorageService(db)
-    return service.create_storage(storage_data)
+    try:
+        service = StorageService(db)
+        return service.create_storage(storage_data)
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=str(ve))
 
 
 @router.get("/storages/", response_model=List[Storage])

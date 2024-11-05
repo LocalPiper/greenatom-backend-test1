@@ -2,7 +2,7 @@ from typing import List, Set
 from sqlalchemy.orm import Session
 from app.src.wsas.repository import WSARepository
 from app.src.wsas.schemas import WSACreate, WSA
-from app.src.paths.models import Path
+from app.src.paths.models import PathModel
 
 
 class WSAService:
@@ -21,7 +21,7 @@ class WSAService:
     def get_all_wsas(self) -> List[WSA]:
         return self.repository.get_all_wsas()
 
-    def get_wsas_from_paths(self, paths: List[Path]):
+    def get_wsas_from_paths(self, paths: List[PathModel]):
         wsas: List[WSA] = []
         wsas_id_set: Set[int] = set()
         for p in paths:

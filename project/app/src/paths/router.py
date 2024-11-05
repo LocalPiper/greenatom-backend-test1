@@ -1,6 +1,6 @@
-from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
 from app.src.paths.schemas import PathCreate, Path
 from app.src.paths.service import PathService
 from app.src.database import get_db
