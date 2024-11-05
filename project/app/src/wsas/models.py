@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from app.src.database import Base
 
 
-class WSA(Base):
+class WSAModel(Base):
     __tablename__ = "wsas"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)

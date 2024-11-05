@@ -13,7 +13,7 @@ from app.src.waste_logic.schemas import (
 )
 from app.src.storages.models import StorageModel
 from app.src.paths.models import PathModel
-from app.src.wsas.models import WSA
+from app.src.wsas.models import WSAModel
 from app.src.organizations.models import Organization
 from app.src.waste_logic.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
 
@@ -43,7 +43,7 @@ class WasteTransferService:
         if len(paths) == 0:
             raise ValueError("No paths from this organization - can't transfer waste!")
         wsas, wsas_id_set = self.wsa_service.get_wsas_from_paths(paths)
-        next_wsas: List[WSA] = []
+        next_wsas: List[WSAModel] = []
         for wsa in wsas:
             self.recursive_wsa_finder(wsa, wsas_id_set, next_wsas)
         wsas = list(set(wsas + next_wsas))
@@ -86,7 +86,7 @@ class WasteTransferService:
         self.execute_queries(remainder, queue, storage, transfer_data.waste_type)
         return self.storage_service.get_all_storages()
 
-    def recursive_wsa_finder(self, wsa: WSA, s: Set[int], wsas: List[WSA]):
+    def recursive_wsa_finder(self, wsa: WSAModel, s: Set[int], wsas: List[WSAModel]):
         paths: List[PathModel] = self.path_service.get_paths_from_wsa(wsa.id)
         for path in paths:
             if path.wsa_end_id not in s:
@@ -96,7 +96,7 @@ class WasteTransferService:
                     s.add(next_wsa.id)
                     self.recursive_wsa_finder(next_wsa, s, wsas)
 
-    def iterative_path_finder(self, wsas: List[WSA]):
+    def iterative_path_finder(self, wsas: List[WSAModel]):
         paths: List[PathModel] = []
         for i in range(len(wsas)):
             for j in range(len(wsas)):
@@ -108,14 +108,16 @@ class WasteTransferService:
         return paths
 
     def graph_builder(
-        self, wsas: List[WSA], paths: List[PathModel], waste_type: WasteType
+        self, wsas: List[WSAModel], paths: List[PathModel], waste_type: WasteType
     ) -> Graph:
         g: Graph = Graph()
         g = self.build_vertices(wsas, waste_type, g)
         g = self.build_edges(paths, g)
         return g
 
-    def build_vertices(self, wsas: List[WSA], waste_type: WasteType, g: Graph) -> Graph:
+    def build_vertices(
+        self, wsas: List[WSAModel], waste_type: WasteType, g: Graph
+    ) -> Graph:
         for wsa in wsas:
             storages: List[StorageModel] = self.storage_service.get_storages_by_wsa_id(
                 wsa.id
