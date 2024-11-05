@@ -2,8 +2,7 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.src.schemas import WasteType
 from app.src.storages.repository import StorageRepository
-from app.src.storages.schemas import StorageCreate
-from app.src.storages.models import Storage
+from app.src.storages.schemas import StorageCreate, Storage
 
 
 class StorageService:
@@ -34,12 +33,14 @@ class StorageService:
         return storage
 
     def update_storage_size(self, storage_id: int, new_size: int) -> Optional[Storage]:
+        if storage_id < 1:
+            raise ValueError("incorrect id")
         if not self.repository.get_storage(storage_id):
-            print("no storage with given id")
+            raise ValueError("no storage with given id")
         elif (self.repository.get_storage(storage_id).capacity < new_size) or (
             new_size < 0
         ):
-            print("invalid size value")
+            raise ValueError("invalid size value")
         else:
             return self.repository.update_storage_size(storage_id, new_size)
 

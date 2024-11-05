@@ -28,6 +28,6 @@ def generate_sample_data(db: Session = Depends(get_db)) -> None:
     create_sample_data(db)
 
 
-@app.on_event("startup")  # type: ignore
+@app.on_event("startup")
 def startup_event(db: Session = next(get_db())) -> None:
     init_db()

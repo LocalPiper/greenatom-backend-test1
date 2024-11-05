@@ -22,8 +22,9 @@ def get_all_storages(db: Session = Depends(get_db)):
 
 @router.patch("/storages/{storage.id}/size", response_model=Storage)
 def update_storage_size(storage_id: int, new_size: int, db: Session = Depends(get_db)):
-    service = StorageService(db)
-    updated_storage = service.update_storage_size(storage_id, new_size)
-    if updated_storage is None:
-        raise HTTPException(status_code=404, detail="Storage not found")
-    return updated_storage
+    try:
+        service = StorageService(db)
+        updated_storage = service.update_storage_size(storage_id, new_size)
+        return updated_storage
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=repr(ve))
