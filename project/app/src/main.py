@@ -1,5 +1,5 @@
 # main.py
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from app.src.database import get_db, init_db
 from app.src.organizations.router import router as organizations_router
@@ -22,8 +22,10 @@ app.include_router(waste_logic_router, prefix="/api")
 async def read_root():
     return {"message": "Welcome to the main page!"}
 
+@app.post("/script")
+def generate_sample_data(db: Session = Depends(get_db)):
+    create_sample_data(db)
+
 @app.on_event("startup")
 def startup_event(db: Session = next(get_db())):
     init_db()
-    truncate_data(db)
-    create_sample_data(db)
