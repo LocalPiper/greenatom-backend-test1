@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.src.wsas.schemas import WSACreate, WSA
 from app.src.wsas.service import WSAService
@@ -10,8 +10,11 @@ router = APIRouter()
 
 @router.post("/wsas/", response_model=WSA)
 def create_wsa(wsa_data: WSACreate, db: Session = Depends(get_db)) -> WSA:
-    service = WSAService(db)
-    return service.create_wsa(wsa_data)
+    try:
+        service = WSAService(db)
+        return service.create_wsa(wsa_data)
+    except ValueError as ve:
+        raise HTTPException(status_code=422, detail=str(ve))
 
 
 @router.get("/wsas/", response_model=List[WSA])

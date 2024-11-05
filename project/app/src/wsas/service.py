@@ -11,6 +11,9 @@ class WSAService:
         self.repository = WSARepository(db)
 
     def create_wsa(self, wsa_data: WSACreate) -> WSA:
+        possible_wsa = self.repository.get_by_name(wsa_data.name)
+        if possible_wsa is not None:
+            raise ValueError("WSA with given name already exists!")
         db_wsa = self.repository.create_wsa(wsa_data)
         return WSA.from_orm(db_wsa)
 
