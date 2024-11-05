@@ -25,6 +25,12 @@ async def read_root() -> dict[str, str]:
 
 @app.post("/script")
 def generate_sample_data(db: Session = Depends(get_db)) -> None:
+    """Generates the layout provided on the image.
+    Should only be used once
+
+    Args:
+        db (Session, optional): database. Defaults to Depends(get_db).
+    """
     create_sample_data(db)
 
 
