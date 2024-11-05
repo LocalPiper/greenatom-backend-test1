@@ -14,7 +14,7 @@ from app.src.waste_logic.schemas import (
 from app.src.storages.models import StorageModel
 from app.src.paths.models import PathModel
 from app.src.wsas.models import WSAModel
-from app.src.organizations.models import Organization
+from app.src.organizations.models import OrganizationModel
 from app.src.waste_logic.utils import Graph, Vertex, Edge, Algorithm, StorageUpdateQuery
 
 
@@ -27,7 +27,7 @@ class WasteTransferService:
         self.wsa_service = WSAService(db)
 
     def prepare_data(self, transfer_data: WasteTransferRequest):
-        organization: Organization = self.organization_service.get_by_name(
+        organization: OrganizationModel = self.organization_service.get_by_name(
             transfer_data.organization_name
         )
         if not organization:
@@ -153,7 +153,7 @@ class WasteProcessingService:
         self.wsa_service = WSAService(db)
 
     def generate_waste(self, generation_data: WasteGenerationRequest):
-        organization = self.organization_service.get_by_name(
+        organization: OrganizationModel = self.organization_service.get_by_name(
             generation_data.organization_name
         )
         if not organization:
@@ -186,7 +186,7 @@ class WasteProcessingService:
             return res_list
 
     def recycle_waste(self, recycle_data: WasteRecycleRequest):
-        wsa = self.wsa_service.get_by_name(recycle_data.wsa_name)
+        wsa: WSAModel = self.wsa_service.get_by_name(recycle_data.wsa_name)
         if not wsa:
             raise ValueError("WSA not found!")
 

@@ -14,5 +14,5 @@ class StorageModel(Base):
     organization_id = Column(Integer, ForeignKey("organizations.id"), nullable=True)
     wsa_id = Column(Integer, ForeignKey("wsas.id"), nullable=True)
 
-    organization = relationship("Organization", back_populates="storages")
+    organization = relationship("OrganizationModel", back_populates="storages")
     wsa = relationship("WSAModel", back_populates="storages")

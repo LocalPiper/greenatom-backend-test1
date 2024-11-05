@@ -1,32 +1,38 @@
 from sqlalchemy.orm import Session
 from app.src.organizations.schemas import OrganizationCreate
-from app.src.organizations.models import Organization
+from app.src.organizations.models import OrganizationModel
 
 
 class OrganizationRepository:
     def __init__(self, db: Session):
         self.db = db
 
-    def create_organization(self, organization: OrganizationCreate):
-        db_organization = Organization(name=organization.name)
+    def create_organization(
+        self, organization: OrganizationCreate
+    ) -> OrganizationModel:
+        db_organization = OrganizationModel(name=organization.name)
         self.db.add(db_organization)
         self.db.commit()
         self.db.refresh(db_organization)
         return db_organization
 
-    def get_organization(self, organization_id: int):
+    def get_organization(self, organization_id: int) -> OrganizationModel:
         return (
-            self.db.query(Organization)
-            .filter(Organization.id == organization_id)
+            self.db.query(OrganizationModel)
+            .filter(OrganizationModel.id == organization_id)
             .first()
         )
 
-    def get_by_name(self, name: str):
-        return self.db.query(Organization).filter(Organization.name == name).first()
+    def get_by_name(self, name: str) -> OrganizationModel:
+        return (
+            self.db.query(OrganizationModel)
+            .filter(OrganizationModel.name == name)
+            .first()
+        )
 
-    def get_all_organizations(self):
-        return self.db.query(Organization).all()
+    def get_all_organizations(self) -> OrganizationModel:
+        return self.db.query(OrganizationModel).all()
 
-    def truncate_data(self):
-        self.db.query(Organization).delete()
+    def truncate_data(self) -> OrganizationModel:
+        self.db.query(OrganizationModel).delete()
         self.db.commit()
